@@ -86,22 +86,22 @@ Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
 Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
 <span class="error">* <?php echo $NachnameErr;?></span>
 <br><br>
-kommenter: <textarea name="Kommenter" rows="5" cols="30"><?php echo $Kommenter;?></textarea>
+Kommentar: <textarea name="Kommenter" rows="5" cols="30"><?php echo $Kommenter;?></textarea>
 <br><br>
-<select name="Lieblings Betribssystem" onchange="zeigt(this.value)">
-<option value="">wählen ein Betribssystem:</option>
+<select name="Lieblings-Betriebssystem" onchange="zeigt(this.value)">
+<option value="">Wählen ein Betriebssystem:</option>
 <option value="1">Windows</option>
 <option value="2">Linux</option>
 <option value="3">Apple</option>
 </select><br><br>
-<select name="Tier vorhanden" onchange="zeigt(this.value)">
+<select name="Tier vorhanden?" onchange="zeigt(this.value)">
 <option value="">Tier:</option>
 <option value="1">Katze</option>
 <option value="2">Hund</option>
 <option value="3">andere</option>
 </select><br><br>
 Geburtsdatum: <input type="date" name="Geburtsdatum"/><br><br>
-<button type="submit">Absend</button> 
+<button type="submit">Absenden</button> 
 </form>
 </body>
 </html>
