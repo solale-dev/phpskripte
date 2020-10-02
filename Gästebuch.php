@@ -5,7 +5,7 @@
 input, select, textarea {
   border: 1px solid darkblue;
   box-sizing: border-box;
-  font-size: 2px;
+  font-size: 14px;
   font-family: 'serif';
   width: 300px;
   padding: 6px;
@@ -20,7 +20,7 @@ button {
   background: green;
   color: white;
   border: 21px solid darkgreen;
-  font-size: 2px;
+  font-size: 14px;
   font-family: 'serif';
 }
 button:hover {
@@ -57,12 +57,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $NachnameErr = "nur Buchstaben erlaubt";
       }
     }
-    if (empty($_POST["Kommenter"])) {
-      $Kommenter = "";
+    if (empty($_POST["Kommentar"])) {
+      $Kommentar = "";
     } else {
-      $Kommenter = test_input($_POST["Kommenter"]);
+      $Kommentar = test_input($_POST["Kommentar"]);
     }
-    
+    if ($_POST["Tier vorhande"]) {
+      $farben =  $_POST["Tier"];
+      echo 
+       
     function test_input($data) {
       $data = trim($data);
       $data = stripslashes($data);
@@ -77,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 Geschlecht:
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Frau") echo "checked";?> value="Frau">Frau
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
-<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="other") echo "checked";?> value="other">Other  
+<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="divers") echo "checked";?> value="other">divers 
 <span class="error">* <?php echo $GeschlechtErr;?></span>
   <br><br>
 Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
@@ -86,22 +89,22 @@ Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
 Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
 <span class="error">* <?php echo $NachnameErr;?></span>
 <br><br>
-Kommentar: <textarea name="Kommenter" rows="5" cols="30"><?php echo $Kommenter;?></textarea>
-<br><br>
 <select name="Lieblings-Betriebssystem" onchange="zeigt(this.value)">
 <option value="">Wählen ein Betriebssystem:</option>
 <option value="1">Windows</option>
 <option value="2">Linux</option>
 <option value="3">Apple</option>
 </select><br><br>
-<select name="Tier vorhanden?" onchange="zeigt(this.value)">
-<option value="">Tier:</option>
-<option value="1">Katze</option>
-<option value="2">Hund</option>
-<option value="3">andere</option>
-</select><br><br>
+<p>Tier vorhanden?</p>
+<input type="checkbox" name="Tier[]" value="Katze" /> Katze
+<input type="checkbox" name="Tier[]" value="Hund" /> Hund
+<input type="checkbox" name="Tier[]" value="Vogel" /> Vogel
+<input type="checkbox" name="Tier[]" value="Andere" /> Andere
+<br><br>
 Geburtsdatum: <input type="date" name="Geburtsdatum"/><br><br>
-<button type="submit">Absenden</button> 
-</form>
+Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
+<br><br>
+<button type="submit">Absenden</button>
+ </form>
 </body>
 </html>
