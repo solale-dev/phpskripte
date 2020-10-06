@@ -40,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  } else {
   $Geschlecht = test_input($_POST["Geschlesht"]);
  }
-}
   if (empty($_POST["Vorname"])) {
     $VornameErr = "Vorname ist Pflicht";
   } else {
@@ -62,9 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $Kommentar = test_input($_POST["Kommentar"]);
     }
+   
     if ($_POST["Tier vorhande"]) {
       $farben =  $_POST["Tier"];
-      echo 
+     echo 
        
     function test_input($data) {
       $data = trim($data);
