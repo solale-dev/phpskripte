@@ -66,14 +66,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $farben =  $_POST["Tier"];
       echo "";
     }
-       
+  }       
     function test_input($data) {
       $data = trim($data);
       $data = stripslashes($data);
       $data = htmlspecialchars($data);
       return $data;
     }
-}
+
 ?>
 
 <h2>Gästebuch</h2>
