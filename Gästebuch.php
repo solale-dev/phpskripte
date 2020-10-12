@@ -1,5 +1,93 @@
 <?php
-echo <<<EOT
+/*
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "myDB";
+
+$conn = new mysqli($servername, $username, $password);
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$sql = "CREATE TABLE MyGuests (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  Vorname VARCHAR(30) NOT NULL,
+  Nachname VARCHAR(30) NOT NULL,
+  Kommentar VARCHAR(500),
+  reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  )";
+$sql = "CREATE DATABASE myDB";
+if ($conn->query($sql) === TRUE) {
+  echo "Database created successfully";
+} else {
+  echo "Error creating database: " . $conn->error;
+}
+
+$conn->close();
+*/
+$GeschlechtErr = $VornameErr = $NachnameErr = $KommentarErr = "";
+$Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
+$betriebssysteme = array("Wählen Sie ein Betriebssystem!", "Windows", "Linux", "Apple");
+$tiere = array("Katze", "Hund", "Vogel", "Andere");
+$lieblingsbetriebssystem = $betriebssysteme[0];
+$Tier=array();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["Geschlecht"])) {
+    $GeschlechtErr = "Geschlecht ist Pflicht";
+  }
+  else {
+    $Geschlecht = test_input($_POST["Geschlecht"]);
+  }
+  if (empty($_POST["Vorname"])) {
+    $VornameErr = "Vorname ist Pflicht";
+  }
+  else {
+    $Vorname = test_input($_POST["Vorname"]);
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$Vorname)) {
+      $VornameErr = "nur Buchstaben erlaubt";
+    }
+  }
+  if (empty($_POST["Nachname"])) {
+    $NachnameErr = "Nachname ist Pflicht";
+  }
+  else {
+    $Nachname = test_input($_POST["Nachname"]);
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$Nachname)) {
+      $NachnameErr = "nur Buchstaben erlaubt";
+    }
+  }
+  if (empty($_POST["Kommentar"])) {
+    $KommentarErr = "Kommentar ist pflicht";
+  }
+  else {
+    $Kommentar = test_input($_POST["Kommentar"]);
+    if (!preg_match("/^[a-zA-Z-' .0-9]*$/",$Kommentar)) {
+      $KommentarErr = "nur Buchstaben erlaubt";
+    }
+  }
+  if (!empty($_POST["Lieblings-Betriebssystem"]) && in_array($_POST["Lieblings-Betriebssystem"], $betriebssysteme)) {
+    $lieblingsbetriebssystem = $_POST["Lieblings-Betriebssystem"];
+  }
+  if (isset($_POST["Tier"])) {
+    foreach ($_POST["Tier"] as $value) {
+      if (in_array($value, $tiere))
+        $Tier[] = $value;
+    }
+  }
+  if (isset($_POST["Geburtsdatum"])) {
+    $Geburtsdatum = $_POST["Geburtsdatum"];
+  }
+
+}
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
+?>
 <!DOCTYPE HTML>  
 <html>
 <head>
@@ -31,81 +119,6 @@ button:hover {
 </style>
 </head>
 <body>
-EOT;
-/*
-$servername = "localhost";
-$username = "username";
-$password = "password";
-$dbname = "myDB";
-
-$conn = new mysqli($servername, $username, $password);
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-$sql = "CREATE TABLE MyGuests (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  Vorname VARCHAR(30) NOT NULL,
-  Nachname VARCHAR(30) NOT NULL,
-  Kommentar VARCHAR(500),
-  reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )";
-$sql = "CREATE DATABASE myDB";
-if ($conn->query($sql) === TRUE) {
-  echo "Database created successfully";
-} else {
-  echo "Error creating database: " . $conn->error;
-}
-
-$conn->close();
-*/
-$GeschlechtErr = $VornameErr = $NachnameErr = "";
-$Geschlecht = $Vorname = $Nachname = $Kommentar = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if (empty($_POST["Geschlecht"])) {
-    $GeschlechtErr = "Geschlecht ist Pflicht";
-  }
-  else {
-    $Geschlecht = test_input($_POST["Geschlecht"]);
-  }
-  if (empty($_POST["Vorname"])) {
-    $VornameErr = "Vorname ist Pflicht";
-  }
-  else {
-    $Vorname = test_input($_POST["Vorname"]);
-    if (!preg_match("/^[a-zA-Z-' ]*$/",$Vorname)) {
-      $VornameErr = "nur Buchstaben erlaubt";
-    }
-  }
-  if (empty($_POST["Nachname"])) {
-    $NachnameErr = "Nachname ist Pflicht";
-  }
-  else {
-    $Nachname = test_input($_POST["Nachname"]);
-    if (!preg_match("/^[a-zA-Z-' ]*$/",$Nachname)) {
-      $NachnameErr = "nur Buchstaben erlaubt";
-    }
-  }
-  if (empty($_POST["Kommentar"])) {
-    $Kommentar = "";
-  }
-  else {
-    $Kommentar = test_input($_POST["Kommentar"]);
-  }
-     
-  if ($_POST["Tier"]) {
-    $farben = $_POST["Tier"];
-    echo "";
-  }
-}
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
-
-?>
 <h2>Gästebuch</h2>
 <p><span class="error">* Pflichtfeld</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -121,23 +134,49 @@ Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
 Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
 <span class="error">* <?php echo $NachnameErr;?></span>
 <br><br>
-<select name="Lieblings-Betriebssystem" onchange="zeigt(this.value)">
-<option value="">Wählen ein Betriebssystem:</option>
-<option value="1">Windows</option>
-<option value="2">Linux</option>
-<option value="3">Apple</option>
+<select name="Lieblings-Betriebssystem">
+  <?php
+  for ($i=0; $i < count($betriebssysteme); $i++) {
+    $selected = "";
+    if ($lieblingsbetriebssystem == $betriebssysteme[$i]) {
+      $selected = " selected";
+    }
+    echo "<option$selected>$betriebssysteme[$i]</option>";
+  }
+  ?>
 </select><br><br>
 <p>Tier vorhanden?</p>
-<input type="checkbox" name="Tier[]" value="Katze" /> Katze
-<input type="checkbox" name="Tier[]" value="Hund" /> Hund
-<input type="checkbox" name="Tier[]" value="Vogel" /> Vogel
-<input type="checkbox" name="Tier[]" value="Andere" /> Andere
+<?php
+foreach ($tiere as $value) {
+  $checked = "";
+  if (!empty($Tier) && in_array($value, $Tier)) {
+    $checked = " checked";
+  }
+  echo "<input type='checkbox' name=\"Tier[]\" value=\"$value\"$checked> $value";
+}
+/*
+<input type="checkbox" name="Tier[]" value="Katze"> Katze
+<input type="checkbox" name="Tier[]" value="Hund"> Hund
+<input type="checkbox" name="Tier[]" value="Vogel"> Vogel
+<input type="checkbox" name="Tier[]" value="Andere"> Andere
+*/
+?>
 <br><br>
-Geburtsdatum: <input type="date" name="Geburtsdatum"/><br><br>
+Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsdatum;?>">
+<br><br>
 Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
 <br><br>
 <button type="submit">Absenden</button>
  </form>
+ <?php
+ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   echo "<h2>Ihre Eingabe:</h2>",
+     "$Vorname $Nachname ($Geburtsdatum)<br>",
+     "Ihr Lieblingsbetriebssystem ist $lieblingsbetriebssystem<br>",
+     "Ihr Kommentar lautet: <b>$Kommentar</b><br>",
+     "Sie haben folgende Tiere: ", join(", ", $Tier);   
+ }
+ ?>
 </body>
 </html>
 
