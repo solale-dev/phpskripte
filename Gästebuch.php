@@ -1,3 +1,5 @@
+<?php
+echo <<<EOT
 <!DOCTYPE HTML>  
 <html>
 <head>
@@ -29,8 +31,8 @@ button:hover {
 </style>
 </head>
 <body>
-
-<?php
+EOT;
+/*
 $servername = "localhost";
 $username = "username";
 $password = "password";
@@ -55,53 +57,55 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $conn->close();
-
+*/
 $GeschlechtErr = $VornameErr = $NachnameErr = "";
 $Geschlecht = $Vorname = $Nachname = $Kommentar = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
- if (empty($_POST["Geschlecht"])) {
-  $GeschlechtErr = "Geschlecht ist Pflicht";
- } else {
-  $Geschlecht = test_input($_POST["Geschlesht"]);
- }
+  if (empty($_POST["Geschlecht"])) {
+    $GeschlechtErr = "Geschlecht ist Pflicht";
+  }
+  else {
+    $Geschlecht = test_input($_POST["Geschlecht"]);
+  }
   if (empty($_POST["Vorname"])) {
     $VornameErr = "Vorname ist Pflicht";
-  } else {
+  }
+  else {
     $Vorname = test_input($_POST["Vorname"]);
     if (!preg_match("/^[a-zA-Z-' ]*$/",$Vorname)) {
       $VornameErr = "nur Buchstaben erlaubt";
     }
   }
-    if (empty($_POST["Nachname"])) {
-      $NachnameErr = "Nachname ist Pflicht";
-    } else {
-      $Nachname = test_input($_POST["Nachname"]);
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$Nachname)) {
-        $NachnameErr = "nur Buchstaben erlaubt";
-      }
-    }
-    if (empty($_POST["Kommentar"])) {
-      $Kommentar = "";
-    } else {
-      $Kommentar = test_input($_POST["Kommentar"]);
-    }
-     
-    if ($_POST["Tier"]) {
-      $farben = $_POST["Tier"];
-      echo "";
-    }
-   
-    function test_input($data) {
-      $data = trim($data);
-      $data = stripslashes($data);
-      $data = htmlspecialchars($data);
-      return $data;
-    }
-
+  if (empty($_POST["Nachname"])) {
+    $NachnameErr = "Nachname ist Pflicht";
   }
-  ?>
+  else {
+    $Nachname = test_input($_POST["Nachname"]);
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$Nachname)) {
+      $NachnameErr = "nur Buchstaben erlaubt";
+    }
+  }
+  if (empty($_POST["Kommentar"])) {
+    $Kommentar = "";
+  }
+  else {
+    $Kommentar = test_input($_POST["Kommentar"]);
+  }
+     
+  if ($_POST["Tier"]) {
+    $farben = $_POST["Tier"];
+    echo "";
+  }
+}
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
 
+?>
 <h2>Gästebuch</h2>
 <p><span class="error">* Pflichtfeld</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -136,3 +140,4 @@ Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?
  </form>
 </body>
 </html>
+
