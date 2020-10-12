@@ -31,8 +31,33 @@ button:hover {
 <body>
 
 <?php
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "myDB";
+
+$conn = new mysqli($servername, $username, $password);
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$sql = "CREATE TABLE MyGuests (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  Vorname VARCHAR(30) NOT NULL,
+  Nachname VARCHAR(30) NOT NULL,
+  Kommentar VARCHAR(500),
+  reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  )";
+$sql = "CREATE DATABASE myDB";
+if ($conn->query($sql) === TRUE) {
+  echo "Database created successfully";
+} else {
+  echo "Error creating database: " . $conn->error;
+}
+
+$conn->close();
+
 $GeschlechtErr = $VornameErr = $NachnameErr = "";
-$Geschlecht = $Vorname = $Nachname = "";
+$Geschlecht = $Vorname = $Nachname = $Kommentar = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
  if (empty($_POST["Geschlecht"])) {
@@ -61,18 +86,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $Kommentar = test_input($_POST["Kommentar"]);
     }
+     
+    if ($_POST["Tier"]) {
+      $farben = $_POST["Tier"];
+      echo "";
+    }
    
-    if ($_POST["Tier vorhande"]) {
-      $farben =  $_POST["Tier"];
-     echo 
-       
     function test_input($data) {
       $data = trim($data);
       $data = stripslashes($data);
       $data = htmlspecialchars($data);
       return $data;
     }
-    ?>
+
+  }
+  ?>
 
 <h2>Gästebuch</h2>
 <p><span class="error">* Pflichtfeld</span></p>
