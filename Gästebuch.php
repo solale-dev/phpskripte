@@ -109,12 +109,12 @@ button {
   height: 40px;
   background: green;
   color: white;
-  border: 21px solid darkgreen;
+  border: 10px solid darkgreen;
   font-size: 14px;
   font-family: 'serif';
 }
 button:hover {
-  border: 2px solid black;
+  border: 12px solid black;
 }
 </style>
 </head>
@@ -127,13 +127,13 @@ Geschlecht:
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="divers") echo "checked";?> value="other">divers 
 <span class="error">* <?php echo $GeschlechtErr;?></span>
-  <br><br>
+  <br><br><br><br>
 Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
 <span class="error">* <?php echo $VornameErr;?></span>
 <br><br>
 Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
 <span class="error">* <?php echo $NachnameErr;?></span>
-<br><br>
+<br><br><br>
 <select name="Lieblings-Betriebssystem">
   <?php
   for ($i=0; $i < count($betriebssysteme); $i++) {
@@ -144,7 +144,7 @@ Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
     echo "<option$selected>$betriebssysteme[$i]</option>";
   }
   ?>
-</select><br><br>
+</select><br><br><br>
 <p>Tier vorhanden?</p>
 <?php
 foreach ($tiere as $value) {
@@ -161,9 +161,9 @@ foreach ($tiere as $value) {
 <input type="checkbox" name="Tier[]" value="Andere"> Andere
 */
 ?>
-<br><br>
+<br><br><br>
 Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsdatum;?>">
-<br><br>
+<br><br><br>
 Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
 <br><br>
 <button type="submit">Absenden</button>

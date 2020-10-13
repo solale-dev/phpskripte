@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://localhost/php/G%C3%A4stebuch.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+input, select, textarea {
+  border: 1px solid darkblue;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: 'serif';
+  width: 300px;
+  padding: 6px;
+}
+textarea {
+  height: 250px;
+}
+input[type=text]:focus {background-color: lightblue;}
+.error {color: red;}
+button {
+  height: 40px;
+  background: green;
+  color: white;
+  border: 21px solid darkgreen;
+  font-size: 14px;
+  font-family: 'serif';
+}
+button:hover {
+  border: 2px solid black;
+}
+</style>
+</head>
+<body>
+<h2>Gästebuch</h2>
+<p><span class="error">* Pflichtfeld</span></p>
+<form method="post" action="http://localhost/php/G%C3%A4stebuch.php">
+Geschlecht:
+<input type="radio" name="Geschlecht" value="Frau">Frau
+<input type="radio" name="Geschlecht" value="Herr">Herr
+<input type="radio" name="Geschlecht" value="other">divers 
+<span class="error">* Geschlecht ist Pflicht</span>
+  <br><br>
+Vorname: <input type="text" name="Vorname" value="">
+<span class="error">* Vorname ist Pflicht</span>
+<br><br>
+Nachname: <input type="text" name="Nachname" value="">
+<span class="error">* Nachname ist Pflicht</span>
+<br><br>
+<select name="Lieblings-Betriebssystem">
+  <option selected="">Wählen Sie ein Betriebssystem!</option><option>Windows</option><option>Linux</option><option>Apple</option></select><br><br>
+<p>Tier vorhanden?</p>
+<input type="checkbox" name="Tier[]" value="Nilpferd" checked=""> Katze<input type="checkbox" name="Tier[]" value="<b>Hund" checked=""> Hund<input type="checkbox" name="Tier[]" value="Vogel" checked=""> Vogel<input type="checkbox" name="Tier[]" value="Andere" checked=""> Andere<br><br>
+Geburtsdatum: <input type="date" name="Geburtsdatum" value="&lt;br /&gt;
+&lt;b&gt;Warning&lt;/b&gt;:  date_format() expects parameter 1 to be DateTimeInterface, string given in &lt;b&gt;C:\xampp\htdocs\php\Gästebuch.php&lt;/b&gt; on line &lt;b&gt;161&lt;/b&gt;&lt;br /&gt;
+">
+<br><br>
+Kommentar: <textarea name="Kommentar" rows="5" cols="30"></textarea>
+<br><br>
+<button type="submit">Absenden</button>
+ </form>
+ Array
+(
+    [Vorname] =&gt; 
+    [Nachname] =&gt; 
+    [Lieblings-Betriebssystem] =&gt; Wählen Sie ein Betriebssystem!
+    [Tier] =&gt; Array
+        (
+            [0] =&gt; Katze
+            [1] =&gt; Hund
+            [2] =&gt; Vogel
+            [3] =&gt; Andere
+        )
+
+    [Geburtsdatum] =&gt; 
+    [Kommentar] =&gt; 
+)
+
+
+
+</body></html>
