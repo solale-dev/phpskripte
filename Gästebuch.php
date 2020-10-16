@@ -1,32 +1,8 @@
 <?php
-/*
-$servername = "localhost";
-$username = "username";
-$password = "password";
-$dbname = "myDB";
 
-$conn = new mysqli($servername, $username, $password);
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-$sql = "CREATE TABLE MyGuests (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  Vorname VARCHAR(30) NOT NULL,
-  Nachname VARCHAR(30) NOT NULL,
-  Kommentar VARCHAR(500),
-  reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )";
-$sql = "CREATE DATABASE myDB";
-if ($conn->query($sql) === TRUE) {
-  echo "Database created successfully";
-} else {
-  echo "Error creating database: " . $conn->error;
-}
-
-$conn->close();
-*/
 $GeschlechtErr = $VornameErr = $NachnameErr = $KommentarErr = "";
 $Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
+$geschlechter = array('Herr', 'Frau', 'Divers');
 $betriebssysteme = array("Wählen Sie ein Betriebssystem!", "Windows", "Linux", "Apple");
 $tiere = array("Katze", "Hund", "Vogel", "Andere");
 $lieblingsbetriebssystem = $betriebssysteme[0];
@@ -78,6 +54,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["Geburtsdatum"])) {
     $Geburtsdatum = $_POST["Geburtsdatum"];
   }
+// Wenn keine Fehler dann speichern in DB
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Gaestebuch";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar)";
+$sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar');";
+if ($conn->query($sql) === TRUE) {
+   //$last_id = $conn->insert_id;
+   echo "New record created successfully";
+} else {
+  echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+$conn->close();
 
 }
 function test_input($data) {
@@ -125,7 +121,7 @@ button:hover {
 Geschlecht:
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Frau") echo "checked";?> value="Frau">Frau
 <input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
-<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="divers") echo "checked";?> value="other">divers 
+<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Divers") echo "checked";?> value="Divers">Divers 
 <span class="error">* <?php echo $GeschlechtErr;?></span>
   <br><br><br><br>
 Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
@@ -165,6 +161,7 @@ foreach ($tiere as $value) {
 Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsdatum;?>">
 <br><br><br>
 Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
+<span class="error">* <?php echo $KommentarErr;?></span>
 <br><br>
 <button type="submit">Absenden</button>
  </form>
