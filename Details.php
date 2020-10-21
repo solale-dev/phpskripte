@@ -2,12 +2,11 @@
 <html>
 <body>
   <?php
+  if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_GET["kommentareID"])) {
   $Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
-  $geschlechter = array('Herr', 'Frau', 'Divers');
-  $betriebssysteme = array("Wählen Sie ein Betriebssystem!", "Windows", "Linux", "Apple");
-  $tiere = array("Katze", "Hund", "Vogel", "Andere");
-  $lieblingsbetriebssystem = $betriebssysteme[0];
+  $lieblingsbetriebssystem = $KommentarDatum = "";
   $Tier=array();
+  
   $servername = "localhost";
   $username = "root";
   $password = "";
@@ -17,30 +16,49 @@
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
-  $sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar)";
-  $sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar');";
-  if ($conn->query($sql) === TRUE) {
-     //$last_id = $conn->insert_id;
-     echo "New record created successfully";
-  } else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
-  }
+  $kid = $_GET["kommentareID"];
+  $sql = "SELECT * FROM `kommentare` WHERE kommentareID = $kid";
+  $result = $conn->query($sql);
+  $row = $result->fetch_assoc();
+  
+  $Geschlecht = $row["Anrede"];
+  $Vorname = $row["Vorname"];
+  $Nachname = $row["Nachname"];
+  $betriebssysteme = $row["Lieblingsbetribssystem"];
+  $Geburtsdatum = $row["Geburtsdatum"];
+  //$Tier = explode(",", $row["Tiervorhanden"]);
+  //$Tier = preg_split("/[\s,]+/", $row["Tiervorhanden"], -1, PREG_SPLIT_NO_EMPTY);
+  $Tier = $row["Tiervorhanden"];
+  $Kommentar = $row["Kommentar"];
+  $KommentarDatum = $row["KommentarDatum"];
   $conn->close();
   
-  function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-  }
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    echo "<h2>Ihre Eingabe:</h2>",
-      "$Geschlecht $Vorname $Nachname <br>",
-      "Ihr Lieblingsbetriebssystem ist $lieblingsbetriebssystem<br>",
-      "Ihr Kommentar von $KommentarDatum lautet: <b>$Kommentar</b><br>";
-     //"Sie haben folgende Tiere: "join(",", $Tier); 
-  }
+  $txtGeburtsdatum = "(Geboren am $Geburtsdatum)";
+  if ($Geburtsdatum == "0000-00-00")
+    $txtGeburtsdatum = "";
+  else if ($Geburtsdatum == NULL)
+    $txtGeburtsdatum = "";   
+  
+  $txtBetriebssystem = "Ihr Lieblingsbetriebssystem ist $betriebssysteme";
+  if ($betriebssysteme == "")
+    $txtBetriebssystem = "Sie haben keinen Lieblingsbetriebssystem";
+
+  $txtTier = "Sie haben folgende Tiere: $Tier";
+  if ($Tier == "")
+    $txtTier = "Sie haben keine folgende Tiere";
+
+  echo "<h2>Details</h2>",
+     "$Geschlecht $Vorname $Nachname $txtGeburtsdatum", "<br>",
+     "$txtBetriebssystem", "<br>",
+     //"Sie haben folgende Tiere: " , join(",", $Tier), "<br>",
+     //"Sie haben folgende Tiere: " , $Tier, "<br>",
+     "$txtTier", "<br>",
+     "Ihr Kommentar von $KommentarDatum lautet: <br><b>$Kommentar</b>", "<br>";
+}
+else {
+  echo "Fehlerhafte Eingabe";
+}
+
   ?>
-<form action="_get.php" method="get"> </form>
 </body>
 </html>

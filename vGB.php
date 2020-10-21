@@ -3,6 +3,7 @@ $target_dir = "bilder/";
 $uploadOk = 1;
 $GeschlechtErr = $VornameErr = $NachnameErr = $KommentarErr = "";
 $Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
+$sqlMeldung = "";
 $geschlechter = array('Herr', 'Frau', 'Divers');
 $betriebssysteme = array("Wählen Sie ein Betriebssystem!", "Windows", "Linux", "Apple");
 $tiere = array("Katze", "Hund", "Vogel", "Andere");
@@ -20,6 +21,7 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Check der Variable auf gültige Eingabe
   if (empty($_POST["Geschlecht"])) {
     $GeschlechtErr = "Geschlecht ist Pflicht";
   }
@@ -169,12 +171,6 @@ foreach ($tiere as $value) {
   }
   echo "<input type='checkbox' name=\"Tier[]\" value=\"$value\"$checked> $value";
 }
-/*
-<input type="checkbox" name="Tier[]" value="Katze"> Katze
-<input type="checkbox" name="Tier[]" value="Hund"> Hund
-<input type="checkbox" name="Tier[]" value="Vogel"> Vogel
-<input type="checkbox" name="Tier[]" value="Andere"> Andere
-*/
 ?>
 <br><br><br>
 Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsdatum;?>">
@@ -198,7 +194,7 @@ Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?
  <br><br>
  <?php
       echo "<section><h1>Letzte Kommentare</h1>";
-      $sql = "SELECT kommentareID, Anrede, Vorname,Nachname, Kommentar FROM kommentare limit 5 offset 10";
+      $sql = "SELECT kommentareID, Anrede, Vorname,Nachname, Kommentar FROM kommentare limit 10 offset 0";
       //'<a href="http://localhost/php/Gaestebuch.php?kommentarID=1" target="_blank">Detail-Link</a>';
       $result = $conn->query($sql);
       while($row = $result->fetch_assoc()) {
@@ -210,14 +206,14 @@ Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?
  $conn->close();
  ?>
  <div class="pagination">
-  <a href="#">&laquo;</a>
-  <a class="active" href="http://localhost/php/Gaestebuch.php?kommentarID=1">1</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">2</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">3</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">4</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">5</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">6</a>
-  <a href="http://localhost/php/Gaestebuch.php?kommentarID=1">&raquo;</a>
+  <a href="http://localhost/php/vGB.php?offset=0">>&laquo;</a>
+  <a href="http://localhost/php/vGB.php?offset=0">1</a>
+  <a href="http://localhost/php/vGB.php?offset=10">2</a>
+  <a href="http://localhost/php/vGB.php?offset=20">3</a>
+  <a href="http://localhost/php/vGB.php?offset=30">4</a>
+  <a href="http://localhost/php/vGB.php?offset=40">5</a>
+  <a href="http://localhost/php/vGB.php?offset=50">6</a>
+  <a href="http://localhost/php/vGB.php?offset=50">&raquo;</a>
 </div>
 
 
