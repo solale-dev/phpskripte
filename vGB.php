@@ -67,17 +67,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["Geburtsdatum"])) {
     $Geburtsdatum = $_POST["Geburtsdatum"];
   }
+
+
 // Wenn keine Fehler dann speichern in DB
+if (($GeschlechtErr . $VornameErr . $NachnameErr . $KommentarErr) == "") {
 
-$sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar)";
-$sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar');";
-if ($conn->query($sql) === TRUE) {
-   //$last_id = $conn->insert_id;
-   echo "New record created successfully";
-} else {
-  echo "Error: " . $sql . "<br>" . $conn->error;
-}
+  $sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar)";
+  $sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar');";
+  if ($conn->query($sql) === TRUE) {
+      //$last_id = $conn->insert_id;
+      $sqlMeldung = "New record created successfully";
+    } else {
+      $sqlMeldung = "Error: " . $sql . "<br>" . $conn->error;
+    }
 
+  }
 }
 function test_input($data) {
   $data = trim($data);
@@ -118,8 +122,7 @@ button:hover {
 }
 .pagination a {
   color: black;
-  float: left;
-  padding: 8px 16px;
+  padding: 8px 30px;
   text-decoration: none;
   transition: background-color .3s;
 }
@@ -140,15 +143,15 @@ button:hover {
 <p><span class="error">* Pflichtfeld</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 Geschlecht:
-<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Frau") echo "checked";?> value="Frau">Frau
-<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
-<input type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Divers") echo "checked";?> value="Divers">Divers 
+<input required type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Frau") echo "checked";?> value="Frau">Frau
+<input required type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
+<input required type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Divers") echo "checked";?> value="Divers">Divers 
 <span class="error">* <?php echo $GeschlechtErr;?></span>
   <br><br><br><br>
-Vorname: <input type="text" name="Vorname" value="<?php echo $Vorname;?>">
+Vorname: <input required type="text" name="Vorname" value="<?php echo $Vorname;?>">
 <span class="error">* <?php echo $VornameErr;?></span>
 <br><br>
-Nachname: <input type="text" name="Nachname" value="<?php echo $Nachname;?>">
+Nachname: <input required type="text" name="Nachname" value="<?php echo $Nachname;?>">
 <span class="error">* <?php echo $NachnameErr;?></span>
 <br><br><br>
 <select name="Lieblings-Betriebssystem">
@@ -175,14 +178,15 @@ foreach ($tiere as $value) {
 <br><br><br>
 Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsdatum;?>">
 <br><br><br>
-Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
+Kommentar: <textarea required name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
 <span class="error">* <?php echo $KommentarErr;?></span>
 <br><br>
 <button type="submit">Absenden</button>
  </form>
  <?php
- if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   echo "<h2>Ihre Eingabe:</h2>",
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    echo $sqlMeldung, "<br>",
+      "<h2>Ihre Eingabe:</h2>",
      "$Geschlecht $Vorname $Nachname <br>",
      "Ihr Kommentar lautet: <b>$Kommentar</b><br>";
  }
@@ -193,30 +197,58 @@ Kommentar: <textarea name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?
 </form>
  <br><br>
  <?php
-      echo "<section><h1>Letzte Kommentare</h1>";
-      $sql = "SELECT kommentareID, Anrede, Vorname,Nachname, Kommentar FROM kommentare limit 10 offset 0";
+      $pagesize = 5;
+      $firstpage = 1;
+      $offset = 0;
+      if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        $firstpage = intval(empty($_GET["firstpage"])?1:$_GET["firstpage"]);
+        $offset = intval(empty($_GET["offset"])?1:$_GET["offset"]);;
+      }
+      $page = intval($offset / 5) + 1;
+      echo "<section><h1>Letzte Kommentare</h1> $offset : $page";
+      $sql = "SELECT kommentareID, Anrede, Vorname,Nachname, Kommentar FROM kommentare limit $pagesize offset $offset";
       //'<a href="http://localhost/php/Gaestebuch.php?kommentarID=1" target="_blank">Detail-Link</a>';
       $result = $conn->query($sql);
       while($row = $result->fetch_assoc()) {
         $kid = $row["kommentareID"];
-        echo "<p><a href='details.php?kommentareID=$kid' target='_blank'>",$row["Anrede"], " ", $row["Vorname"], " ", $row["Nachname"], "</a><br>",
+        echo "<p><a href='details.php?kommentareID=$kid' target='_blank'>",$row["Anrede"], " ", $row["Vorname"], " ", $row["Nachname"], " ", $row["bilder"], "</a><br>",
              "<b>", $row["Kommentar"], "</b></p>";
       }
       echo "</section>";
  $conn->close();
  ?>
+ <br><br>
  <div class="pagination">
-  <a href="http://localhost/php/vGB.php?offset=0">>&laquo;</a>
-  <a href="http://localhost/php/vGB.php?offset=0">1</a>
-  <a href="http://localhost/php/vGB.php?offset=10">2</a>
-  <a href="http://localhost/php/vGB.php?offset=20">3</a>
-  <a href="http://localhost/php/vGB.php?offset=30">4</a>
-  <a href="http://localhost/php/vGB.php?offset=40">5</a>
-  <a href="http://localhost/php/vGB.php?offset=50">6</a>
-  <a href="http://localhost/php/vGB.php?offset=50">&raquo;</a>
+  <a href="http://localhost/php/vGB.php?offset=0"></a>
+  <?php
+   if ($firstpage > 1)  {
+    $firstpage--;
+    $offset = ($firstpage - 1) * $pagesize;
+    echo "<a class='page-link' href= 'http://localhost/php/vGB.php?offset=$offset&firstpage=$firstpage' aria-label='Nächster'>",
+          "<span class='sr-only'>Vorheriger</span>";
+    $firstpage++;  
+  }
+
+  for ($i=$firstpage; $i < $firstpage + 5; $i++) { 
+    $offset = ($i - 1) * $pagesize;
+    if ($i == $page) {
+      $aktiv = "class='active'";
+    }
+    else {
+      $aktiv = "";
+    }
+    echo "<a $aktiv href='http://localhost/php/vGB.php?offset=$offset&firstpage=$firstpage'>$i</a>";
+    }
+  $offset = ($i - 1) * $pagesize;
+  $firstpage++;
+  if ($offset < 45)  {
+    echo "<a class='page-link' href= 'http://localhost/php/vGB.php?offset=$offset&firstpage=$firstpage' aria-label='Nächster'>",
+         "<span class='sr-only'>Nächster</span>";
+  }
+  
+  ?>
+  <a href="http://localhost/php/vGB.php?offset=45"></a>
 </div>
-
-
 </body>
 </html>
 
