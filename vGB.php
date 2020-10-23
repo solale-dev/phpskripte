@@ -3,7 +3,7 @@ $target_dir = "bilder/";
 $uploadOk = 1;
 $GeschlechtErr = $VornameErr = $NachnameErr = $KommentarErr = "";
 $Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
-$sqlMeldung = "";
+$sqlMeldung = $errormsg = "";
 $geschlechter = array('Herr', 'Frau', 'Divers');
 $betriebssysteme = array("Wählen Sie ein Betriebssystem!", "Windows", "Linux", "Apple");
 $tiere = array("Katze", "Hund", "Vogel", "Andere");
@@ -67,13 +67,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["Geburtsdatum"])) {
     $Geburtsdatum = $_POST["Geburtsdatum"];
   }
+  if(isset($_FILES["fileToUpload"])) {
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+    if($check === false) {
+      $errormsg .= "Datei ist kein Bild.<br>";
+    }
+   /* else if (file_exists($target_file)) {
+      $errormsg .= "Leider, das Bild existiert bereits.<br>";
+    }*/
+    else if ($_FILES["fileToUpload"]["size"] > 250000) {
+      $errormsg .= "Leider, Ihres Bild ist Groß.<br>";
+    }
+    else if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    && $imageFileType != "gif" ) {
+      $errormsg .= "Leider, nur JPG, JPEG, PNG & GIF sind erlaubt.<br>";
+    }
+    else {
+      if (!move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+        $errormsg .=  "Leider, beim Hochladen Ihres Bild ist ein Fehler aufgetreten.";
+      }
+    }
+  }
+  else {
+    $target_file = NULL;
+  }
 
+  // Wenn keine Fehler dann speichern in DB
+if (($GeschlechtErr . $VornameErr . $NachnameErr . $KommentarErr . $errormsg) == "") {
 
-// Wenn keine Fehler dann speichern in DB
-if (($GeschlechtErr . $VornameErr . $NachnameErr . $KommentarErr) == "") {
-
-  $sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar)";
-  $sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar');";
+  $sql = "INSERT INTO kommentare (Anrede, Vorname, Nachname, Lieblingsbetribssystem, Tiervorhanden, Geburtsdatum, Kommentar, Bild)";
+  $sql .= " values('$Geschlecht', '$Vorname', '$Nachname', '$lieblingsbetriebssystem','" .  join(",", $Tier) . "', '$Geburtsdatum', '$Kommentar', '$target_file');";
   if ($conn->query($sql) === TRUE) {
       //$last_id = $conn->insert_id;
       $sqlMeldung = "New record created successfully";
@@ -103,6 +128,10 @@ input, select, textarea {
   font-family: 'serif';
   width: 300px;
   padding: 6px;
+} 
+img {
+  width:50px;
+  height:50px;
 }
 textarea {
   height: 250px;
@@ -141,7 +170,7 @@ button:hover {
 <body>
 <h2>Gästebuch</h2>
 <p><span class="error">* Pflichtfeld</span></p>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">
 Geschlecht:
 <input required type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Frau") echo "checked";?> value="Frau">Frau
 <input required type="radio" name="Geschlecht"<?php if (isset($Geschlecht) && $Geschlecht=="Herr") echo "checked";?> value="Herr">Herr
@@ -181,8 +210,11 @@ Geburtsdatum: <input type="date" name="Geburtsdatum" value="<?php echo $Geburtsd
 Kommentar: <textarea required name="Kommentar" rows="5" cols="30"><?php echo $Kommentar;?></textarea>
 <span class="error">* <?php echo $KommentarErr;?></span>
 <br><br>
+  Bild:  <input type="file" name="fileToUpload" id="fileToUpload">
+ <br><?php echo $errormsg; ?><br>
 <button type="submit">Absenden</button>
  </form>
+
  <?php
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo $sqlMeldung, "<br>",
@@ -191,11 +223,6 @@ Kommentar: <textarea required name="Kommentar" rows="5" cols="30"><?php echo $Ko
      "Ihr Kommentar lautet: <b>$Kommentar</b><br>";
  }
  ?>
-  <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">
-  <?php echo $target_dir = "bilder/"; ?>
-  <input type="file" name="fileToUpload" id="fileToUpload">
-</form>
- <br><br>
  <?php
       $pagesize = 5;
       $firstpage = 1;
@@ -211,11 +238,11 @@ Kommentar: <textarea required name="Kommentar" rows="5" cols="30"><?php echo $Ko
       $result = $conn->query($sql);
       while($row = $result->fetch_assoc()) {
         $kid = $row["kommentareID"];
-        echo "<p><a href='details.php?kommentareID=$kid' target='_blank'>",$row["Anrede"], " ", $row["Vorname"], " ", $row["Nachname"], " ", $row["bilder"], "</a><br>",
+        echo "<p><a href='details.php?kommentareID=$kid' target='_blank'>",$row["Anrede"], " ", $row["Vorname"], " ", $row["Nachname"], " ", "</a><br>",
              "<b>", $row["Kommentar"], "</b></p>";
       }
       echo "</section>";
- $conn->close();
+
  ?>
  <br><br>
  <div class="pagination">
@@ -241,11 +268,11 @@ Kommentar: <textarea required name="Kommentar" rows="5" cols="30"><?php echo $Ko
     }
   $offset = ($i - 1) * $pagesize;
   $firstpage++;
-  if ($offset < 45)  {
+  if ($offset < 60)  {
     echo "<a class='page-link' href= 'http://localhost/php/vGB.php?offset=$offset&firstpage=$firstpage' aria-label='Nächster'>",
          "<span class='sr-only'>Nächster</span>";
   }
-  
+  $conn->close();
   ?>
   <a href="http://localhost/php/vGB.php?offset=45"></a>
 </div>
