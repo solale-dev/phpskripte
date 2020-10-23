@@ -4,7 +4,7 @@
   <?php
   if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_GET["kommentareID"])) {
   $Geschlecht = $Vorname = $Nachname = $Kommentar = $Geburtsdatum= "";
-  $lieblingsbetriebssystem = $KommentarDatum = "";
+  $lieblingsbetriebssystem = $KommentarDatum = $target_file = "";
   $Tier=array();
   
   $servername = "localhost";
@@ -26,6 +26,7 @@
   $Nachname = $row["Nachname"];
   $betriebssysteme = $row["Lieblingsbetribssystem"];
   $Geburtsdatum = $row["Geburtsdatum"];
+  $target_file = $row["Bild"];
   //$Tier = explode(",", $row["Tiervorhanden"]);
   //$Tier = preg_split("/[\s,]+/", $row["Tiervorhanden"], -1, PREG_SPLIT_NO_EMPTY);
   $Tier = $row["Tiervorhanden"];
